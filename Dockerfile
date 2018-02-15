@@ -11,10 +11,10 @@ FROM ubuntu:16.04
 LABEL maintainer="Kevin Sandermann"
 
 ARG KUBECTL_VERSION
-ENV KUBECTL_VERSION ${KUBECTL_VERSION}
 
 # AWS CLI needs the PYTHONIOENCODING environment varialbe to handle UTF-8 correctly:
 ENV PYTHONIOENCODING=UTF-8
+
 
 RUN apt-get update
 
@@ -28,13 +28,11 @@ RUN apt-get install -y \
     openssh-client \
     python-passlib \
     jq \
-    git \
-    vim \
     wget
 
 RUN pip install awscli j2cli[yaml] boto boto3
 
-RUN curl -SsL --retry 5 "https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl" > /usr/local/bin/kubectl && \
+RUN curl -SsL --retry 5 "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" > /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
 
@@ -51,5 +49,5 @@ RUN echo 'alias heptio-gettoken="heptio-authenticator-aws token -i \$(kubectl-ge
 RUN echo 'alias k="kubectl --token \$(heptio-gettoken)"' >> ~/.bashrc
 
 
-WORKDIR /project
+WORKDIR /workdir
 
